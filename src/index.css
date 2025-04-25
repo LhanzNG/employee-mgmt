@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar in Webkit browsers */
+}
+
+.custom-scrollbar {
+  scrollbar-width: none; /* Hides the scrollbar in Firefox */
+}
+
+/* Animation for smooth fade-in and slide-up */
+@keyframes slide-up-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-fade-in {
+  animation: slide-up-fade-in 0.5s ease-out forwards;
+}
