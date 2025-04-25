@@ -1,5 +1,3 @@
-import React from "react";
-
 const SettingsPage = () => {
   return (
     <div className="p-6 max-w-[1600px] mx-auto">
