@@ -15,13 +15,15 @@ import ProjectsPage from "./pages/ProjectsPage";
 import SettingsPage from "./pages/SettingsPage";
 import AuthPage from "./pages/AuthPage";
 import Popup from "./components/Popup";
+import { useEmployeeStore } from "./store/employeeStore";
 
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-  const [hasLoginPopupShown, setHasLoginPopupShown] = useState(false); // Track if login popup has shown
+  const [hasLoginPopupShown, setHasLoginPopupShown] = useState(false);
+  const { fetchNotifications } = useEmployeeStore();
 
   // To track if the tab is focused
   const isTabFocused = useRef(true);
@@ -31,6 +33,10 @@ function App() {
     // Fetch the initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) {
+        // Fetch notifications when session exists
+        fetchNotifications();
+      }
       setLoading(false);
     });
 
@@ -40,46 +46,41 @@ function App() {
     } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
 
-      // Only show the popup on login if the tab is focused, and it hasn't been shown before
-      if (
-        event === "SIGNED_IN" &&
-        isTabFocused.current &&
-        !hasLoginPopupShown &&
-        !isInitialLoad.current
-      ) {
-        setPopupMessage("Logged in successfully!");
-        setPopupVisible(true);
-        setHasLoginPopupShown(true); // Mark that the login popup has been shown
+      if (event === "SIGNED_IN") {
+        // Fetch notifications on sign in
+        fetchNotifications();
+
+        if (
+          isTabFocused.current &&
+          !hasLoginPopupShown &&
+          !isInitialLoad.current
+        ) {
+          setPopupMessage("Logged in successfully!");
+          setPopupVisible(true);
+          setHasLoginPopupShown(true);
+        }
       }
 
-      // Only show the popup on logout if the tab is focused
       if (event === "SIGNED_OUT" && isTabFocused.current) {
         setPopupMessage("Logged out successfully!");
         setPopupVisible(true);
-        setHasLoginPopupShown(false); // Reset login popup status on logout
+        setHasLoginPopupShown(false);
       }
 
-      // Mark initial load as complete
       isInitialLoad.current = false;
     });
 
-    // Handle the visibility change of the tab (focus vs. unfocused)
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        isTabFocused.current = true; // Tab is focused
-      } else {
-        isTabFocused.current = false; // Tab is not focused
-      }
+      isTabFocused.current = document.visibilityState === "visible";
     };
 
-    // Attach event listener to detect visibility changes
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       subscription.unsubscribe();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [hasLoginPopupShown]);
+  }, [hasLoginPopupShown, fetchNotifications]);
 
   if (loading) {
     return (
@@ -114,7 +115,6 @@ function App() {
         )}
       </Routes>
 
-      {/* Popup Component */}
       <Popup
         message={popupMessage}
         isVisible={popupVisible}

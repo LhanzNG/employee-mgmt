@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useEmployeeStore } from "../store/employeeStore";
 import { useDepartmentStore } from "../store/departmentStore";
@@ -7,10 +7,6 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import DocumentList from "../components/DocumentList";
 import Modal from "../components/Modal";
 import DocumentUpload from "../components/DocumentUpload";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import Select from "../components/Select";
-import TextArea from "../components/TextArea";
 import {
   Briefcase,
   User,
@@ -29,11 +25,7 @@ import {
 
 const EmployeeDetails = () => {
   const { id } = useParams();
-  const {
-    employees,
-    fetchEmployees,
-    isLoading: employeeLoading,
-  } = useEmployeeStore();
+  const { employees, isLoading: employeeLoading } = useEmployeeStore();
   const {
     departments,
     fetchDepartments,
@@ -155,63 +147,49 @@ const EmployeeDetails = () => {
       case "private":
         return (
           <div className="bg-white p-6 rounded-lg shadow space-y-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <User className="w-5 h-5 mr-2 text-primary" />
-              Private Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-gray-500">Email</label>
-                <p className="font-medium">{employee.email}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 mr-2 text-gray-400" />
+                  <div>
+                    <label className="text-sm text-gray-500">Phone</label>
+                    <p className="font-medium">{employee.phone}</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="w-5 h-5 mr-2 text-gray-400" />
+                  <div>
+                    <label className="text-sm text-gray-500">Email</label>
+                    <p className="font-medium">{employee.email}</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="text-sm text-gray-500">Phone</label>
-                <p className="font-medium">{employee.phone || "N/A"}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Birthdate</label>
-                <p className="font-medium">{employee.birthdate || "N/A"}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Gender</label>
-                <p className="font-medium">{employee.gender || "N/A"}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Address</label>
-                <p className="font-medium">{employee.address || "N/A"}</p>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-gray-400" />
+                  <div>
+                    <label className="text-sm text-gray-500">Birthdate</label>
+                    <p className="font-medium">
+                      {new Date(employee.birthdate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <MapPin className="w-5 h-5 mr-2 text-gray-400" />
+                  <div>
+                    <label className="text-sm text-gray-500">Address</label>
+                    <p className="font-medium">{employee.address}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         );
       case "hr":
         return (
-          <div className="bg-white p-6 rounded-lg shadow space-y-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Settings className="w-5 h-5 mr-2 text-primary" />
-              HR Settings
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-gray-500">Employment Type</label>
-                <p className="font-medium">{employee.employment_type}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Base Pay</label>
-                <p className="font-medium">
-                  ${employee.base_pay.toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Department</label>
-                <p className="font-medium">{department?.name || "N/A"}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-500">Project</label>
-                <p className="font-medium">
-                  {employee.projects?.name || "N/A"}
-                </p>
-              </div>
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-4">HR Settings</h3>
+            <p>HR settings and configurations will be displayed here.</p>
           </div>
         );
       case "documents":
@@ -219,7 +197,7 @@ const EmployeeDetails = () => {
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Documents</h3>
-              <Button
+              <button
                 onClick={handleRefreshDocuments}
                 className="flex items-center bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200"
                 disabled={isRefreshing}
@@ -230,7 +208,7 @@ const EmployeeDetails = () => {
                   <RefreshCw className="w-5 h-5 mr-2" />
                 )}
                 Refresh
-              </Button>
+              </button>
             </div>
             <div
               className={`overflow-x-auto scrollbar-hide ${
@@ -255,13 +233,13 @@ const EmployeeDetails = () => {
             </div>
             {activeTab === "documents" && (
               <div className="mt-6">
-                <Button
+                <button
                   onClick={() => setIsUploadModalOpen(true)}
                   className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
                 >
                   <Plus className="w-5 h-5 mr-2" />
                   Upload Documents
-                </Button>
+                </button>
               </div>
             )}
 
@@ -283,18 +261,19 @@ const EmployeeDetails = () => {
               <div className="space-y-4">
                 <p>Are you sure you want to delete this document?</p>
                 <div className="flex justify-end space-x-3">
-                  <Button
+                  <button
                     onClick={() => setIsDeleteModalOpen(false)}
                     className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     onClick={handleDeleteDocument}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-re
+d-700"
                   >
                     Delete
-                  </Button>
+                  </button>
                 </div>
               </div>
             </Modal>

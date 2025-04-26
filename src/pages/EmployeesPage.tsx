@@ -7,10 +7,6 @@ import { useDocumentStore } from "../store/documentStore";
 import { Pencil, Trash2, Plus, Loader2, View } from "lucide-react";
 import Modal from "../components/Modal";
 import DocumentUpload from "../components/DocumentUpload";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import Select from "../components/Select";
-import TextArea from "../components/TextArea";
 
 const emptyFormData = {
   first_name: "",
@@ -79,7 +75,7 @@ const EmployeesPage = () => {
       reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          profile_url: reader.result as string, // Ensure profile_url is updated
+          profile_url: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
@@ -143,11 +139,12 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             First Name
           </label>
-          <Input
+          <input
             type="text"
             name="first_name"
             value={formData.first_name}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
             required
           />
         </div>
@@ -155,11 +152,12 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Last Name
           </label>
-          <Input
+          <input
             type="text"
             name="last_name"
             value={formData.last_name}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
             required
           />
         </div>
@@ -169,11 +167,12 @@ const EmployeesPage = () => {
         <label className="block text-sm font-medium text-gray-700">
           Position
         </label>
-        <Input
+        <input
           type="text"
           name="position"
           value={formData.position}
           onChange={handleInputChange}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           required
         />
       </div>
@@ -183,11 +182,12 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
-          <Input
+          <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
             required
           />
         </div>
@@ -195,11 +195,12 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Phone
           </label>
-          <Input
+          <input
             type="tel"
             name="phone"
             value={formData.phone}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
       </div>
@@ -209,29 +210,37 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Department
           </label>
-          <Select
+          <select
             name="department_id"
-            value={formData.department_id.toString()} // Convert to string
+            value={formData.department_id}
             onChange={handleInputChange}
-            options={departments.map((dept) => ({
-              value: dept.id.toString(),
-              label: dept.name,
-            }))}
-          />
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          >
+            <option value={0}>Select Department</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Project
           </label>
-          <Select
+          <select
             name="project_id"
-            value={formData.project_id.toString()} // Convert to string
+            value={formData.project_id}
             onChange={handleInputChange}
-            options={projects.map((project) => ({
-              value: project.id.toString(),
-              label: project.name,
-            }))}
-          />
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          >
+            <option value={0}>Select Project</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -240,27 +249,28 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Employment Type
           </label>
-          <Select
+          <select
             name="employment_type"
             value={formData.employment_type}
             onChange={handleInputChange}
-            options={[
-              { value: "Full-time", label: "Full-time" },
-              { value: "Part-time", label: "Part-time" },
-              { value: "Contract", label: "Contract" },
-              { value: "Intern", label: "Intern" },
-            ]}
-          />
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          >
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Intern">Intern</option>
+          </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Base Pay
           </label>
-          <Input
+          <input
             type="number"
             name="base_pay"
-            value={formData.base_pay.toString()} // Convert to string
+            value={formData.base_pay}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
       </div>
@@ -270,27 +280,28 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             Birthdate
           </label>
-          <Input
+          <input
             type="date"
             name="birthdate"
             value={formData.birthdate}
             onChange={handleInputChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Gender
           </label>
-          <Select
+          <select
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-            options={[
-              { value: "Male", label: "Male" },
-              { value: "Female", label: "Female" },
-              { value: "Other", label: "Other" },
-            ]}
-          />
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
       </div>
 
@@ -298,11 +309,12 @@ const EmployeesPage = () => {
         <label className="block text-sm font-medium text-gray-700">
           Address
         </label>
-        <TextArea
+        <textarea
           name="address"
           value={formData.address}
           onChange={handleInputChange}
           rows={3}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
         />
       </div>
 
@@ -310,22 +322,16 @@ const EmployeesPage = () => {
         <label className="block text-sm font-medium text-gray-700">
           Profile Picture
         </label>
-        <Input
+        <input
           type="file"
+          accept="image/*"
           onChange={handleFileChange}
           className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
         />
-        {formData.profile_url && (
-          <img
-            src={formData.profile_url}
-            alt="Profile Preview"
-            className="mt-4 w-24 h-24 object-cover rounded-full border"
-          />
-        )}
       </div>
 
       <div className="flex justify-end space-x-3">
-        <Button
+        <button
           type="button"
           onClick={() => {
             setIsAddModalOpen(false);
@@ -335,13 +341,13 @@ const EmployeesPage = () => {
           className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
         >
           Cancel
-        </Button>
-        <Button
+        </button>
+        <button
           type="submit"
           className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
         >
           {selectedEmployee ? "Update" : "Add"} Employee
-        </Button>
+        </button>
       </div>
     </form>
   );
@@ -360,13 +366,13 @@ const EmployeesPage = () => {
     <div className="p-6 mx-auto max-w-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Employees</h1>
-        <Button
+        <button
           onClick={openAddModal}
           className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add Employee
-        </Button>
+        </button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -500,19 +506,19 @@ const EmployeesPage = () => {
       >
         <div className="space-y-4">
           <p>Are you sure you want to delete this employee?</p>
-          <div className="flex justify-end space-x-3 mt-6">
-            <Button
+          <div className="flex justify-end space-x-3">
+            <button
               onClick={() => setIsDeleteModalOpen(false)}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={handleDelete}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
             >
               Delete
-            </Button>
+            </button>
           </div>
         </div>
       </Modal>
