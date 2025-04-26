@@ -22,7 +22,7 @@ const Header = ({ isCollapsed }: HeaderProps) => {
   const { notifications, markNotificationAsRead } = useEmployeeStore();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [filter, setFilter] = useState<"all" | "unread">("all");
   const [activeEllipsis, setActiveEllipsis] = useState<number | null>(null);
 
   const handleNotificationClick = () => {
@@ -50,11 +50,16 @@ const Header = ({ isCollapsed }: HeaderProps) => {
   const handleMarkAsUnread = (id: number) => {
     useEmployeeStore.setState((state) => {
       const updatedNotifications = state.notifications.map((notification) =>
-        notification.id === id ? { ...notification, isRead: false } : notification
+        notification.id === id
+          ? { ...notification, isRead: false }
+          : notification
       );
 
       // Persist the updated notifications to localStorage
-      localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(updatedNotifications)
+      );
 
       return { notifications: updatedNotifications };
     });
@@ -67,14 +72,17 @@ const Header = ({ isCollapsed }: HeaderProps) => {
       );
 
       // Persist the updated notifications to localStorage
-      localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(updatedNotifications)
+      );
 
       return { notifications: updatedNotifications };
     });
   };
 
   const filteredNotifications =
-    filter === 'all' ? notifications : notifications.filter((n) => !n.isRead);
+    filter === "all" ? notifications : notifications.filter((n) => !n.isRead);
 
   return (
     <div className="h-16 px-4 border-b flex items-center bg-white">
@@ -84,7 +92,10 @@ const Header = ({ isCollapsed }: HeaderProps) => {
           <h1 className="text-2xl font-bold text-primary">Propel</h1>
         </div>
       )}
-      <div className="ml-auto relative cursor-pointer" onClick={handleNotificationClick}>
+      <div
+        className="ml-auto relative cursor-pointer"
+        onClick={handleNotificationClick}
+      >
         <Bell className="w-5 h-5 text-gray-700 mr-4" />
         {notifications.filter((n) => !n.isRead).length > 0 && (
           <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -96,19 +107,23 @@ const Header = ({ isCollapsed }: HeaderProps) => {
             <div className="flex justify-between items-center p-2 border-b">
               <div className="flex space-x-4">
                 <button
-                  className={`px-4 py-2 ${filter === 'all' ? 'font-bold text-primary' : ''}`}
+                  className={`px-4 py-2 ${
+                    filter === "all" ? "font-bold text-primary" : ""
+                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setFilter('all');
+                    setFilter("all");
                   }}
                 >
                   All
                 </button>
                 <button
-                  className={`px-4 py-2 ${filter === 'unread' ? 'font-bold text-primary' : ''}`}
+                  className={`px-4 py-2 ${
+                    filter === "unread" ? "font-bold text-primary" : ""
+                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setFilter('unread');
+                    setFilter("unread");
                   }}
                 >
                   Unread
@@ -131,12 +146,20 @@ const Header = ({ isCollapsed }: HeaderProps) => {
                 {filteredNotifications.map((notification) => (
                   <li
                     key={notification.id}
-                    className={`p-4 cursor-pointer flex justify-between items-center ${notification.isRead ? "bg-gray-100" : "bg-blue-50"} hover:bg-gray-50`}
+                    className={`p-4 cursor-pointer flex justify-between items-center ${
+                      notification.isRead ? "bg-gray-100" : "bg-blue-50"
+                    } hover:bg-gray-50`}
                   >
-                    <div onClick={() => handleNotificationItemClick(notification)}>
-                      <span className="block font-medium">{notification.message}</span>
+                    <div
+                      onClick={() => handleNotificationItemClick(notification)}
+                    >
+                      <span className="block font-medium">
+                        {notification.message}
+                      </span>
                       <span className="text-xs text-gray-400">
-                        {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(notification.timestamp), {
+                          addSuffix: true,
+                        })}
                       </span>
                     </div>
                     <div className="relative">

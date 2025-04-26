@@ -79,7 +79,7 @@ const EmployeesPage = () => {
       reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          profile_url: reader.result as string,
+          profile_url: reader.result as string, // Ensure profile_url is updated
         }));
       };
       reader.readAsDataURL(file);
@@ -145,9 +145,10 @@ const EmployeesPage = () => {
           </label>
           <Input
             type="text"
+            name="first_name"
             value={formData.first_name}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            required
           />
         </div>
         <div>
@@ -156,9 +157,10 @@ const EmployeesPage = () => {
           </label>
           <Input
             type="text"
+            name="last_name"
             value={formData.last_name}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            required
           />
         </div>
       </div>
@@ -169,9 +171,10 @@ const EmployeesPage = () => {
         </label>
         <Input
           type="text"
+          name="position"
           value={formData.position}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          required
         />
       </div>
 
@@ -182,9 +185,10 @@ const EmployeesPage = () => {
           </label>
           <Input
             type="email"
+            name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            required
           />
         </div>
         <div>
@@ -193,9 +197,9 @@ const EmployeesPage = () => {
           </label>
           <Input
             type="tel"
+            name="phone"
             value={formData.phone}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
       </div>
@@ -206,13 +210,13 @@ const EmployeesPage = () => {
             Department
           </label>
           <Select
+            name="department_id"
+            value={formData.department_id.toString()} // Convert to string
+            onChange={handleInputChange}
             options={departments.map((dept) => ({
               value: dept.id.toString(),
               label: dept.name,
             }))}
-            value={formData.department_id.toString()}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
         <div>
@@ -220,13 +224,72 @@ const EmployeesPage = () => {
             Project
           </label>
           <Select
+            name="project_id"
+            value={formData.project_id.toString()} // Convert to string
+            onChange={handleInputChange}
             options={projects.map((project) => ({
               value: project.id.toString(),
               label: project.name,
             }))}
-            value={formData.project_id.toString()}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Employment Type
+          </label>
+          <Select
+            name="employment_type"
+            value={formData.employment_type}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            options={[
+              { value: "Full-time", label: "Full-time" },
+              { value: "Part-time", label: "Part-time" },
+              { value: "Contract", label: "Contract" },
+              { value: "Intern", label: "Intern" },
+            ]}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Base Pay
+          </label>
+          <Input
+            type="number"
+            name="base_pay"
+            value={formData.base_pay.toString()} // Convert to string
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Birthdate
+          </label>
+          <Input
+            type="date"
+            name="birthdate"
+            value={formData.birthdate}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Gender
+          </label>
+          <Select
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+            options={[
+              { value: "Male", label: "Male" },
+              { value: "Female", label: "Female" },
+              { value: "Other", label: "Other" },
+            ]}
           />
         </div>
       </div>
@@ -236,27 +299,49 @@ const EmployeesPage = () => {
           Address
         </label>
         <TextArea
+          name="address"
           value={formData.address}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          rows={3}
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Profile Picture
+        </label>
+        <Input
+          type="file"
+          onChange={handleFileChange}
+          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+        />
+        {formData.profile_url && (
+          <img
+            src={formData.profile_url}
+            alt="Profile Preview"
+            className="mt-4 w-24 h-24 object-cover rounded-full border"
+          />
+        )}
       </div>
 
       <div className="flex justify-end space-x-3">
         <Button
-          label="Cancel"
+          type="button"
           onClick={() => {
             setIsAddModalOpen(false);
             setIsEditModalOpen(false);
             setFormData(emptyFormData);
           }}
           className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-        />
+        >
+          Cancel
+        </Button>
         <Button
-          label={selectedEmployee ? "Update" : "Add Employee"}
-          onClick={handleSubmit}
+          type="submit"
           className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-        />
+        >
+          {selectedEmployee ? "Update" : "Add"} Employee
+        </Button>
       </div>
     </form>
   );
@@ -276,10 +361,12 @@ const EmployeesPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Employees</h1>
         <Button
-          label="Add Employee"
           onClick={openAddModal}
           className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
-        />
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Add Employee
+        </Button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -415,15 +502,17 @@ const EmployeesPage = () => {
           <p>Are you sure you want to delete this employee?</p>
           <div className="flex justify-end space-x-3 mt-6">
             <Button
-              label="Cancel"
               onClick={() => setIsDeleteModalOpen(false)}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            />
+            >
+              Cancel
+            </Button>
             <Button
-              label="Delete"
               onClick={handleDelete}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-            />
+            >
+              Delete
+            </Button>
           </div>
         </div>
       </Modal>

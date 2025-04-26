@@ -1,3 +1,4 @@
+import React, { ReactNode } from "react";
 import { X } from "lucide-react";
 
 interface ModalProps {

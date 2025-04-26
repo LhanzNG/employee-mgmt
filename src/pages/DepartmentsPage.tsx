@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDepartmentStore } from "../store/departmentStore";
 import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
 import Modal from "../components/Modal";
-import Button from "../components/Button";
 import Input from "../components/Input";
 import TextArea from "../components/TextArea";
 
@@ -86,9 +85,10 @@ const DepartmentsPage = () => {
         </label>
         <Input
           type="text"
+          name="name"
           value={formData.name}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          required
         />
       </div>
       <div>
@@ -96,26 +96,30 @@ const DepartmentsPage = () => {
           Description
         </label>
         <TextArea
+          name="description"
           value={formData.description}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          rows={4}
         />
       </div>
       <div className="flex justify-end space-x-3">
-        <Button
-          label="Cancel"
+        <button
+          type="button"
           onClick={() => {
             setIsAddModalOpen(false);
             setIsEditModalOpen(false);
             setFormData(emptyFormData);
           }}
           className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-        />
-        <Button
-          label={selectedDepartment ? "Update Department" : "Add Department"}
-          onClick={handleSubmit}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
           className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-        />
+        >
+          {selectedDepartment ? "Update Department" : "Add Department"}
+        </button>
       </div>
     </form>
   );
@@ -134,11 +138,13 @@ const DepartmentsPage = () => {
     <div className="p-6 max-w-[1600px] mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Departments</h1>
-        <Button
-          label="Add Department"
+        <button
           onClick={openAddModal}
           className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
-        />
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Add Department
+        </button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -196,7 +202,10 @@ const DepartmentsPage = () => {
 
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setFormData(emptyFormData);
+        }}
         title="Add Department"
       >
         {departmentForm}
@@ -204,7 +213,11 @@ const DepartmentsPage = () => {
 
       <Modal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedDepartment(null);
+          setFormData(emptyFormData);
+        }}
         title="Edit Department"
       >
         {departmentForm}
@@ -212,22 +225,27 @@ const DepartmentsPage = () => {
 
       <Modal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedDepartment(null);
+        }}
         title="Delete Department"
       >
         <div className="space-y-4">
           <p>Are you sure you want to delete this department?</p>
           <div className="flex justify-end space-x-3">
-            <Button
-              label="Cancel"
+            <button
               onClick={() => setIsDeleteModalOpen(false)}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            />
-            <Button
-              label="Delete"
+            >
+              Cancel
+            </button>
+            <button
               onClick={handleDelete}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-            />
+            >
+              Delete
+            </button>
           </div>
         </div>
       </Modal>

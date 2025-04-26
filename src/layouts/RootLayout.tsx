@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Popup from "../components/Popup";
-import { useEmployeeStore } from "../store/employeeStore";
 
 const RootLayout = () => {
-  const { fetchNotifications } = useEmployeeStore();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -15,10 +13,6 @@ const RootLayout = () => {
     setPopupMessage(message);
     setIsPopupVisible(true);
   };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
 
   return (
     <div className="min-h-screen flex bg-gray-50">

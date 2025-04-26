@@ -4,6 +4,7 @@ import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import Select from "../components/Select";
 import TextArea from "../components/TextArea";
 
 const emptyFormData = {
@@ -13,6 +14,7 @@ const emptyFormData = {
   end_date: "",
   status: "planning",
   progress: "",
+  department_id: 0, // Added missing property
 };
 
 const ProjectsPage = () => {
@@ -42,20 +44,10 @@ const ProjectsPage = () => {
     >
   ) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => {
-      if (name === "status" && value !== "in_progress") {
-        return {
-          ...prev,
-          status: value,
-          progress: "",
-        };
-      }
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "department_id" ? Number(value) : value, // Ensure correct type
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -132,9 +124,10 @@ const ProjectsPage = () => {
         </label>
         <Input
           type="text"
+          name="name"
           value={formData.name}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          required
         />
       </div>
 
@@ -143,9 +136,10 @@ const ProjectsPage = () => {
           Description
         </label>
         <TextArea
+          name="description"
           value={formData.description}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          rows={4}
         />
       </div>
 
@@ -156,9 +150,9 @@ const ProjectsPage = () => {
           </label>
           <Input
             type="date"
+            name="start_date"
             value={formData.start_date}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
         <div>
@@ -167,28 +161,62 @@ const ProjectsPage = () => {
           </label>
           <Input
             type="date"
+            name="end_date"
             value={formData.end_date}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
           />
         </div>
       </div>
 
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Status
+        </label>
+        <Select
+          name="status"
+          value={formData.status}
+          onChange={handleInputChange}
+          options={[
+            { value: "planning", label: "Planning (0%)" },
+            { value: "on_hold", label: "On Hold (20%)" },
+            { value: "completed", label: "Completed (100%)" },
+            { value: "in_progress", label: "In Progress (custom %)" },
+          ]}
+        />
+      </div>
+
+      {formData.status === "in_progress" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Custom Progress (%)
+          </label>
+          <Input
+            type="number"
+            name="progress"
+            value={formData.progress}
+            onChange={handleInputChange}
+            min={0}
+            max={100}
+            required
+          />
+        </div>
+      )}
+
       <div className="flex justify-end space-x-3">
         <Button
-          label="Cancel"
+          type="button"
           onClick={() => {
             setIsAddModalOpen(false);
             setIsEditModalOpen(false);
             setFormData(emptyFormData);
           }}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-        />
-        <Button
-          label={selectedProject ? "Update Project" : "Add Project"}
-          onClick={handleSubmit}
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-        />
+          variant="outline"
+        >
+          Cancel
+        </Button>
+        <Button type="submit">
+          {selectedProject ? "Update Project" : "Add Project"}
+        </Button>
       </div>
     </form>
   );
@@ -207,11 +235,10 @@ const ProjectsPage = () => {
     <div className="p-6 max-w-[1600px] mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Projects</h1>
-        <Button
-          label="Add Project"
-          onClick={openAddModal}
-          className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
-        />
+        <Button onClick={openAddModal}>
+          <Plus className="w-5 h-5 mr-2" />
+          Add Project
+        </Button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -322,15 +349,14 @@ const ProjectsPage = () => {
           <p>Are you sure you want to delete this project?</p>
           <div className="flex justify-end space-x-3">
             <Button
-              label="Cancel"
               onClick={() => setIsDeleteModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            />
-            <Button
-              label="Delete"
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-            />
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} variant="danger">
+              Delete
+            </Button>
           </div>
         </div>
       </Modal>

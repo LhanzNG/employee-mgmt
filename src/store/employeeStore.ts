@@ -42,6 +42,9 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
           *,
           departments (
             name
+          ),
+          projects (
+            name
           )
         `
         )

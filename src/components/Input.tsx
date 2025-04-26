@@ -1,27 +1,35 @@
 import React from "react";
 
 type InputProps = {
-  type: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  type?: string;
+  name?: string;
   className?: string;
+  disabled?: boolean;
 };
 
 const Input: React.FC<InputProps> = ({
-  type,
   value,
   onChange,
-  placeholder,
-  className,
+  placeholder = "",
+  type = "text",
+  name = "",
+  className = "",
+  disabled = false,
 }) => {
   return (
     <input
       type={type}
+      name={name}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className={`input ${className}`}
+      className={`border px-3 py-2 rounded-lg w-full ${className} ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+      disabled={disabled}
     />
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import Input from "../components/Input";
 
 interface DocumentUploadProps {
   onUpload?: (files: { [key: string]: File }) => Promise<void>;
@@ -67,7 +68,10 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       }
 
       for (const [label, file] of Object.entries(validDocs)) {
-        const filePath = `${employeeId}/${label}-${file.name}`;
+        // Generate a unique file name by appending a timestamp
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const uniqueFileName = `${label}-${timestamp}-${file.name}`;
+        const filePath = `${employeeId}/${uniqueFileName}`;
 
         console.log(`Uploading file: ${file.name} to path: ${filePath}`);
 
@@ -144,7 +148,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <label className="block text-sm font-medium text-gray-700">
             {doc}
           </label>
-          <input
+          <Input
             type="file"
             onChange={(e) => handleFileChange(doc, e.target.files?.[0] || null)}
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"

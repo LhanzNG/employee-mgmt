@@ -1,20 +1,32 @@
 import React from "react";
 
 type SelectProps = {
-  options: { value: string; label: string }[];
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string; label: string }[];
+  name?: string;
   className?: string;
+  disabled?: boolean;
 };
 
 const Select: React.FC<SelectProps> = ({
-  options,
   value,
   onChange,
-  className,
+  options,
+  name = "",
+  className = "",
+  disabled = false,
 }) => {
   return (
-    <select value={value} onChange={onChange} className={`select ${className}`}>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`border px-3 py-2 rounded-lg w-full ${className} ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+      disabled={disabled}
+    >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
