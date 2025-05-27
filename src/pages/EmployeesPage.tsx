@@ -89,8 +89,14 @@ const EmployeesPage = () => {
     e.preventDefault();
     const submitData = {
       ...formData,
-      department_id: Number(formData.department_id),
-      project_id: Number(formData.project_id),
+      department_id:
+        !formData.department_id || formData.department_id === "0"
+          ? null
+          : Number(formData.department_id),
+      project_id:
+        !formData.project_id || formData.project_id === "0"
+          ? null
+          : Number(formData.project_id),
       base_pay: Number(formData.base_pay),
     };
     if (selectedEmployee) {

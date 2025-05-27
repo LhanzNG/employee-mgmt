@@ -10,8 +10,8 @@ export interface Employee {
   address: string;
   profile_url: string;
   employment_type: string;
-  department_id: number;
-  project_id: number;
+  department_id: number | null;
+  project_id: number | null;
   created_at: string;
   updated_at: string;
   base_pay: number;
