@@ -7,6 +7,11 @@ import { useDocumentStore } from "../store/documentStore";
 import { Pencil, Trash2, Plus, Loader2, View } from "lucide-react";
 import Modal from "../components/Modal";
 import DocumentUpload from "../components/DocumentUpload";
+import EmployeeRequestsPage from "./EmployeesRequestPage";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import TextArea from "../components/TextArea";
 
 const emptyFormData = {
   first_name: "",
@@ -15,9 +20,9 @@ const emptyFormData = {
   email: "",
   phone: "",
   employment_type: "full-time",
-  department_id: 0,
-  project_id: 0,
-  base_pay: 0,
+  department_id: "0",
+  project_id: "0",
+  base_pay: "0",
   birthdate: "",
   gender: "male",
   address: "",
@@ -38,13 +43,14 @@ const EmployeesPage = () => {
   } = useEmployeeStore();
   const { departments, fetchDepartments } = useDepartmentStore();
   const { projects, fetchProjects } = useProjectStore();
-  const { fetchDocumentsByEmployee } = useDocumentStore();
+  const {} = useDocumentStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyFormData);
+  const [showRequests, setShowRequests] = useState(false);
 
   useEffect(() => {
     fetchEmployees();
@@ -61,10 +67,7 @@ const EmployeesPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        name === "department_id" || name === "project_id" || name === "base_pay"
-          ? Number(value)
-          : value,
+      [name]: value,
     }));
   };
 
@@ -84,11 +87,17 @@ const EmployeesPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const submitData = {
+      ...formData,
+      department_id: Number(formData.department_id),
+      project_id: Number(formData.project_id),
+      base_pay: Number(formData.base_pay),
+    };
     if (selectedEmployee) {
-      await updateEmployee(Number(selectedEmployee), formData);
+      await updateEmployee(Number(selectedEmployee), submitData);
       setIsEditModalOpen(false);
     } else {
-      await addEmployee(formData);
+      await addEmployee(submitData);
       setIsAddModalOpen(false);
     }
     setFormData(emptyFormData);
@@ -97,15 +106,17 @@ const EmployeesPage = () => {
   const handleEdit = (employee: any) => {
     setSelectedEmployee(employee.id.toString());
     setFormData({
-      first_name: employee.first_name,
-      last_name: employee.last_name,
-      position: employee.position,
-      email: employee.email,
+      first_name: employee.first_name || "",
+      last_name: employee.last_name || "",
+      position: employee.position || "",
+      email: employee.email || "",
       phone: employee.phone || "",
-      employment_type: employee.employment_type,
-      department_id: employee.department_id || 0,
-      project_id: employee.project_id || 0,
-      base_pay: employee.base_pay || 0,
+      employment_type: employee.employment_type || "full-time",
+      department_id: employee.department_id
+        ? String(employee.department_id)
+        : "0",
+      project_id: employee.project_id ? String(employee.project_id) : "0",
+      base_pay: employee.base_pay ? String(employee.base_pay) : "0",
       birthdate: employee.birthdate || "",
       gender: employee.gender || "male",
       address: employee.address || "",
@@ -127,11 +138,6 @@ const EmployeesPage = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleViewDocuments = (employeeId: number) => {
-    fetchDocumentsByEmployee(employeeId);
-    setSelectedEmployee(employeeId.toString());
-  };
-
   const employeeForm = (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -139,215 +145,183 @@ const EmployeesPage = () => {
           <label className="block text-sm font-medium text-gray-700">
             First Name
           </label>
-          <input
+          <Input
             type="text"
             name="first_name"
             value={formData.first_name}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            required
+            onChange={handleInputChange as any}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Last Name
           </label>
-          <input
+          <Input
             type="text"
             name="last_name"
             value={formData.last_name}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            required
+            onChange={handleInputChange as any}
           />
         </div>
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Position
         </label>
-        <input
+        <Input
           type="text"
           name="position"
           value={formData.position}
-          onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-          required
+          onChange={handleInputChange as any}
         />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
-          <input
+          <Input
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-            required
+            onChange={handleInputChange as any}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Phone
           </label>
-          <input
+          <Input
             type="tel"
             name="phone"
             value={formData.phone}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            onChange={handleInputChange as any}
           />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Department
           </label>
-          <select
+          <Select
             name="department_id"
-            value={formData.department_id}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-          >
-            <option value={0}>Select Department</option>
-            {departments.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
+            value={String(formData.department_id)}
+            onChange={handleInputChange as any}
+            options={departments.map((dept) => ({
+              value: String(dept.id),
+              label: dept.name,
+            }))}
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Project
           </label>
-          <select
+          <Select
             name="project_id"
-            value={formData.project_id}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-          >
-            <option value={0}>Select Project</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+            value={String(formData.project_id)}
+            onChange={handleInputChange as any}
+            options={projects.map((project) => ({
+              value: String(project.id),
+              label: project.name,
+            }))}
+          />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Employment Type
           </label>
-          <select
+          <Select
             name="employment_type"
             value={formData.employment_type}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-          >
-            <option value="Full-time">Full-time</option>
-            <option value="Part-time">Part-time</option>
-            <option value="Contract">Contract</option>
-            <option value="Intern">Intern</option>
-          </select>
+            onChange={handleInputChange as any}
+            options={[
+              { value: "Full-time", label: "Full-time" },
+              { value: "Part-time", label: "Part-time" },
+              { value: "Contract", label: "Contract" },
+              { value: "Intern", label: "Intern" },
+            ]}
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Base Pay
           </label>
-          <input
+          <Input
             type="number"
             name="base_pay"
-            value={formData.base_pay}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            value={String(formData.base_pay)}
+            onChange={handleInputChange as any}
           />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Birthdate
           </label>
-          <input
+          <Input
             type="date"
             name="birthdate"
             value={formData.birthdate}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+            onChange={handleInputChange as any}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Gender
           </label>
-          <select
+          <Select
             name="gender"
             value={formData.gender}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-          >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
+            onChange={handleInputChange as any}
+            options={[
+              { value: "male", label: "Male" },
+              { value: "female", label: "Female" },
+              { value: "other", label: "Other" },
+            ]}
+          />
         </div>
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Address
         </label>
-        <textarea
+        <TextArea
           name="address"
           value={formData.address}
-          onChange={handleInputChange}
-          rows={3}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+          onChange={handleInputChange as any}
         />
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Profile Picture
         </label>
         <input
           type="file"
-          accept="image/*"
+          name="profile_url"
           onChange={handleFileChange}
-          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+          className="border px-3 py-2 rounded-lg w-full"
         />
       </div>
-
       <div className="flex justify-end space-x-3">
-        <button
+        <Button
           type="button"
           onClick={() => {
             setIsAddModalOpen(false);
             setIsEditModalOpen(false);
             setFormData(emptyFormData);
           }}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          variant="outline"
         >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-        >
+        </Button>
+        <Button type="submit">
           {selectedEmployee ? "Update" : "Add"} Employee
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -363,115 +337,148 @@ const EmployeesPage = () => {
   }
 
   return (
-    <div className="p-6 mx-auto max-w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Employees</h1>
-        <button
-          onClick={openAddModal}
-          className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Employee
-        </button>
-      </div>
-
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        {isLoading ? (
-          <div className="flex justify-center items-center p-8">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Employee
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Position
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Employment Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Base Pay
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {employees.map((employee) => (
-                  <tr key={employee.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <img
-                          className="h-10 w-10 rounded-full bg-gray-200"
-                          src={
-                            employee.profile_url ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              employee.first_name + " " + employee.last_name
-                            )}&background=random`
-                          }
-                          alt={`${employee.first_name} ${employee.last_name}`}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              employee.first_name + " " + employee.last_name
-                            )}&background=random`;
-                          }}
-                        />
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {employee.first_name} {employee.last_name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {employee.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {employee.position}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {employee.employment_type}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${employee.base_pay?.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-middle space-x-3">
-                      <button
-                        onClick={() => navigate(`/employees/${employee.id}`)}
-                        className="text-primary hover:underline"
-                      >
-                        <View className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleEdit(employee)}
-                        className="text-primary hover:underline"
-                      >
-                        <Pencil className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedEmployee(employee.id.toString());
-                          setIsDeleteModalOpen(true);
-                        }}
-                        className="text-red-600 hover:underline"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+    <div className="p-6 max-w-[1600px] mx-auto">
+      <div className="mb-6 flex justify-between items-center">
+        <div className="border-b border-gray-200 w-full bg-transparent">
+          <nav className="flex space-x-8 bg-transparent">
+            <button
+              onClick={() => setShowRequests(false)}
+              className={`flex items-center py-4 px-1 border-b-2 font-semibold text-lg transition-all focus:outline-none bg-transparent shadow-none ${
+                !showRequests
+                  ? "border-primary text-primary border-b-2"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+              style={{ boxShadow: "none" }}
+              tabIndex={0}
+            >
+              Employees
+            </button>
+            <button
+              onClick={() => setShowRequests(true)}
+              className={`flex items-center py-4 px-1 border-b-2 font-semibold text-lg transition-all focus:outline-none bg-transparent shadow-none ${
+                showRequests
+                  ? "border-primary text-primary border-b-2"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+              style={{ boxShadow: "none" }}
+              tabIndex={0}
+            >
+              Requests
+            </button>
+          </nav>
+        </div>
+        {!showRequests && (
+          <Button
+            onClick={openAddModal}
+            className="ml-6 flex items-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="whitespace-nowrap">Add Employee</span>
+          </Button>
         )}
       </div>
+
+      {showRequests ? (
+        <EmployeeRequestsPage />
+      ) : (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          {isLoading ? (
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Employee
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Position
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Employment Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Base Pay
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {employees.map((employee) => (
+                    <tr key={employee.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <img
+                            className="h-10 w-10 rounded-full bg-gray-200"
+                            src={
+                              employee.profile_url ||
+                              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                employee.first_name + " " + employee.last_name
+                              )}&background=random`
+                            }
+                            alt={`${employee.first_name} ${employee.last_name}`}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                employee.first_name + " " + employee.last_name
+                              )}&background=random`;
+                            }}
+                          />
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {employee.first_name} {employee.last_name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {employee.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {employee.position}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {employee.employment_type}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${employee.base_pay?.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium align-middle space-x-3">
+                        <button
+                          onClick={() => navigate(`/employees/${employee.id}`)}
+                          className="text-primary hover:underline"
+                        >
+                          <View className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(employee)}
+                          className="text-primary hover:underline"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedEmployee(employee.id.toString());
+                            setIsDeleteModalOpen(true);
+                          }}
+                          className="text-red-600 hover:underline"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
 
       <Modal
         isOpen={isAddModalOpen}
@@ -507,18 +514,15 @@ const EmployeesPage = () => {
         <div className="space-y-4">
           <p>Are you sure you want to delete this employee?</p>
           <div className="flex justify-end space-x-3">
-            <button
+            <Button
               onClick={() => setIsDeleteModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              variant="outline"
             >
               Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-            >
+            </Button>
+            <Button onClick={handleDelete} variant="danger">
               Delete
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -531,7 +535,7 @@ const EmployeesPage = () => {
         }}
         title="Upload Documents"
       >
-        <DocumentUpload employeeId={selectedEmployee} />
+        {selectedEmployee && <DocumentUpload employeeId={selectedEmployee} />}
       </Modal>
     </div>
   );

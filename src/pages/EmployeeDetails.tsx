@@ -18,7 +18,6 @@ import {
   MapPin,
   DollarSign,
   X,
-  Plus,
   RefreshCw,
   Loader2,
 } from "lucide-react";
@@ -35,7 +34,6 @@ const EmployeeDetails = () => {
     useDocumentStore();
   const [activeTab, setActiveTab] = useState("work");
   const [showImageModal, setShowImageModal] = useState(false);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -231,28 +229,10 @@ const EmployeeDetails = () => {
                 }}
               />
             </div>
-            {activeTab === "documents" && (
-              <div className="mt-6">
-                <button
-                  onClick={() => setIsUploadModalOpen(true)}
-                  className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:bg-primary/90"
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Upload Documents
-                </button>
-              </div>
-            )}
-
-            {isUploadModalOpen && (
-              <Modal
-                isOpen={isUploadModalOpen}
-                onClose={() => setIsUploadModalOpen(false)}
-                title="Upload Documents"
-              >
-                <DocumentUpload employeeId={id || ""} />
-              </Modal>
-            )}
-
+            {/* Drop box for uploading documents */}
+            <div className="mt-6">
+              <DocumentUpload employeeId={id || ""} />
+            </div>
             <Modal
               isOpen={isDeleteModalOpen}
               onClose={() => setIsDeleteModalOpen(false)}
@@ -269,8 +249,7 @@ const EmployeeDetails = () => {
                   </button>
                   <button
                     onClick={handleDeleteDocument}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-re
-d-700"
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                   >
                     Delete
                   </button>

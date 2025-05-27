@@ -16,6 +16,7 @@ import SettingsPage from "./pages/SettingsPage";
 import AuthPage from "./pages/AuthPage";
 import Popup from "./components/Popup";
 import { useEmployeeStore } from "./store/employeeStore";
+import EmployeesRequestPage from "./pages/EmployeesRequestPage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -109,6 +110,7 @@ function App() {
             <Route path="/employees/:id" element={<EmployeeDetails />} />
             <Route path="/departments" element={<DepartmentsPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/requests" element={<EmployeesRequestPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

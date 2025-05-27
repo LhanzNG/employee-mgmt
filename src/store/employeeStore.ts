@@ -148,7 +148,7 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
       const mockNotifications: Notification[] = [
         {
           id: 1,
-          message: "Pending leave request",
+          message: "Pending requests",
           type: "request",
           link: "/employees/requests",
           isRead: false,
