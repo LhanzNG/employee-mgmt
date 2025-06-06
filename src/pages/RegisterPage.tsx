@@ -1,49 +1,25 @@
-import { supabase } from "../lib/supabase";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Rocket, Eye, EyeOff } from "lucide-react";
-import Popup from "../components/Popup";
+import { supabase } from "../lib/supabase";
+import { Rocket } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import Input from "../components/Input";
+import Button from "../components/Button";
 
-const AuthPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
-    firstName: "",
-    lastName: "",
+    name: "",
+    username: "",
     phone: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setIsPopupVisible(true);
-        navigate("/");
-      }
-    };
-
-    checkSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setIsPopupVisible(true);
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,8 +47,7 @@ const AuthPage = () => {
         password: formData.password,
         options: {
           data: {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
+            name: formData.name,
             phone: formData.phone,
           },
         },
@@ -81,14 +56,22 @@ const AuthPage = () => {
 
       // 2. Store user profile in 'user_credentials' table if registration succeeded
       if (data?.user) {
+        // Split full name into first and last name if possible
+        let first_name = "";
+        let last_name = "";
+        if (formData.name) {
+          const nameParts = formData.name.trim().split(" ");
+          first_name = nameParts[0];
+          last_name = nameParts.slice(1).join(" ");
+        }
         const { error: dbError } = await supabase
           .from("user_credentials")
           .insert([
             {
               id: data.user.id, // Use the same id as Auth
               email: formData.email,
-              first_name: formData.firstName,
-              last_name: formData.lastName,
+              first_name,
+              last_name,
               phone: formData.phone,
               created_at: new Date().toISOString(),
             },
@@ -98,7 +81,6 @@ const AuthPage = () => {
           setLoading(false);
           return;
         }
-        setIsPopupVisible(true);
         navigate("/");
       }
     } catch (error: any) {
@@ -115,71 +97,71 @@ const AuthPage = () => {
           <Rocket className="w-8 h-8 text-primary mr-2" />
           <h1 className="text-2xl font-bold text-primary">Propel</h1>
         </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              First Name
+              Full Name
             </label>
-            <input
+            <Input
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="name"
+              value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
-            <input
+            <Input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Phone Number
+              Phone
             </label>
-            <input
+            <Input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <Input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2"
               />
               <button
                 type="button"
@@ -196,18 +178,18 @@ const AuthPage = () => {
               </button>
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2"
               />
               <button
                 type="button"
@@ -226,33 +208,27 @@ const AuthPage = () => {
               </button>
             </div>
           </div>
+
           {error && (
             <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
               {error}
             </div>
           )}
-          <button
-            type="submit"
-            className="w-full bg-primary text-white py-2 rounded"
-            disabled={loading}
-          >
-            {loading ? "Creating account..." : "Sign Up"}
-          </button>
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Creating account..." : "Register"}
+          </Button>
+
           <p className="text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline">
+            <Link to="/auth" className="text-primary hover:underline">
               Sign in
             </Link>
           </p>
         </form>
       </div>
-      <Popup
-        message="Successfully registered!"
-        isVisible={isPopupVisible}
-        onClose={() => setIsPopupVisible(false)}
-      />
     </div>
   );
 };
 
-export default AuthPage;
+export default RegisterPage;

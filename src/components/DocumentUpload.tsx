@@ -278,17 +278,6 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               <label className="block text-sm font-medium text-gray-700">
                 {doc}
               </label>
-              {uploadedDocuments[doc] && (
-                <div className="flex items-center space-x-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  <button
-                    onClick={() => handleDeleteDocument(doc)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              )}
             </div>
             <Input
               type="file"
@@ -299,6 +288,37 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
               disabled={!!uploadedDocuments[doc]}
             />
+            {/* Show uploaded file name and view link if present */}
+            {uploadedDocuments[doc] && (
+              <div className="flex items-center mt-2 space-x-2">
+                <span className="text-sm text-gray-700 truncate max-w-xs">
+                  {(() => {
+                    try {
+                      const url = new URL(uploadedDocuments[doc].url);
+                      return decodeURIComponent(
+                        url.pathname.split("/").pop() || ""
+                      );
+                    } catch {
+                      return "View";
+                    }
+                  })()}
+                </span>
+                <a
+                  href={uploadedDocuments[doc].url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline text-sm"
+                >
+                  View
+                </a>
+                <button
+                  onClick={() => handleDeleteDocument(doc)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
+            )}
             {uploadProgress[doc] !== undefined && (
               <div className="text-sm text-gray-600 mt-1">
                 Uploading: {uploadProgress[doc]}%

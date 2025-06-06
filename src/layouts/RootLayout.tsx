@@ -4,7 +4,11 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Popup from "../components/Popup";
 
-const RootLayout = () => {
+interface RootLayoutProps {
+  onLogout?: () => void;
+}
+
+const RootLayout = ({ onLogout }: RootLayoutProps) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -19,7 +23,7 @@ const RootLayout = () => {
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={setIsSidebarCollapsed}
-        onLogout={() => showPopup("Successfully logged out!")}
+        onLogout={onLogout || (() => showPopup("Successfully logged out!"))}
       />
       <div
         className={`flex-1 transition-all duration-300 ease-in-out ${

@@ -193,21 +193,6 @@ const EmployeeDetails = () => {
       case "documents":
         return (
           <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Documents</h3>
-              <button
-                onClick={handleRefreshDocuments}
-                className="flex items-center bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200"
-                disabled={isRefreshing}
-              >
-                {isRefreshing ? (
-                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                ) : (
-                  <RefreshCw className="w-5 h-5 mr-2" />
-                )}
-                Refresh
-              </button>
-            </div>
             <div
               className={`overflow-x-auto scrollbar-hide ${
                 documents.length > 4 ? "max-h-[300px] overflow-y-auto" : ""
@@ -221,13 +206,6 @@ const EmployeeDetails = () => {
                   }
                 `}
               </style>
-              <DocumentList
-                documents={documents}
-                onDelete={(id) => {
-                  setSelectedDocument(id);
-                  setIsDeleteModalOpen(true);
-                }}
-              />
             </div>
             {/* Drop box for uploading documents */}
             <div className="mt-6">

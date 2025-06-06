@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -20,9 +20,12 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isCollapsed, toggleSidebar, onLogout }: SidebarProps) => {
+  const navigate = useNavigate();
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     onLogout();
+    navigate("/login"); // Redirect to login page after sign out
   };
 
   return (

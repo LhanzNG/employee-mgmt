@@ -8,7 +8,7 @@ interface Notification {
   type: string;
   link: string;
   isRead: boolean;
-  timestamp: string; // Added timestamp property
+  timestamp: string;
 }
 
 interface EmployeeStore {
@@ -137,20 +137,18 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
 
   fetchNotifications: async () => {
     try {
-      // Check if notifications exist in localStorage
       const storedNotifications = localStorage.getItem("notifications");
       if (storedNotifications) {
         set({ notifications: JSON.parse(storedNotifications) });
         return;
       }
 
-      // Simulate fetching notifications from an API or database
       const mockNotifications: Notification[] = [
         {
           id: 1,
           message: "Pending requests",
           type: "request",
-          link: "/employees/requests",
+          link: "/requests",
           isRead: false,
           timestamp: "2025-04-22T10:00:00Z",
         },
@@ -164,9 +162,7 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
         },
       ];
 
-      // Persist the fetched notifications to localStorage
       localStorage.setItem("notifications", JSON.stringify(mockNotifications));
-
       set({ notifications: mockNotifications });
     } catch (error) {
       console.error("Failed to fetch notifications", error);
@@ -181,7 +177,6 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
           : notification
       );
 
-      // Persist the updated notifications to localStorage
       localStorage.setItem(
         "notifications",
         JSON.stringify(updatedNotifications)
