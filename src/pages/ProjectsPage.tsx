@@ -55,10 +55,9 @@ const ProjectsPage = () => {
 
     const dataToSubmit = {
       ...formData,
-      progress:
-        formData.status === "in_progress"
-          ? parseInt(formData.progress || "0", 10)
-          : undefined,
+      progress: ["in_progress", "on_hold"].includes(formData.status)
+        ? parseInt(formData.progress || "0", 10)
+        : undefined,
     };
 
     if (selectedProject) {
@@ -109,7 +108,8 @@ const ProjectsPage = () => {
         const parsed = parseInt(progress?.toString() || "0", 10);
         return `In Progress (${parsed}%)`;
       case "on_hold":
-        return "On Hold (20%)";
+        const parseOnHold = parseInt(progress?.toString() || "0", 10);
+        return `On Hold (${parseOnHold}%)`;
       case "planning":
       default:
         return "Planning (0%)";
@@ -178,7 +178,7 @@ const ProjectsPage = () => {
           onChange={handleInputChange}
           options={[
             { value: "planning", label: "Planning (0%)" },
-            { value: "on_hold", label: "On Hold (20%)" },
+            { value: "on_hold", label: "On Hold (custom %)" },
             { value: "completed", label: "Completed (100%)" },
             { value: "in_progress", label: "In Progress (custom %)" },
           ]}
@@ -186,6 +186,23 @@ const ProjectsPage = () => {
       </div>
 
       {formData.status === "in_progress" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Custom Progress (%)
+          </label>
+          <Input
+            type="number"
+            name="progress"
+            value={formData.progress}
+            onChange={handleInputChange}
+            min={0}
+            max={100}
+            required
+          />
+        </div>
+      )}
+
+      {formData.status === "on_hold" && (
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Custom Progress (%)
